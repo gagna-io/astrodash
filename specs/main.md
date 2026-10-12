@@ -14,6 +14,7 @@ The following widgets will be available:
 - A precipitation graph widget
 - A widget for the expected seeing conditions
 - Cloud coverage widget
+- Jet stream widget
 
 The data for all of these widgets will be fetched from public API's relevant to each widget.
 
@@ -91,6 +92,18 @@ The 7Timer! seeing value is converted to both scales:
 | 7 | 2–2.5" | 4 |
 | 8 | > 2.5" | 3 |
 
+### Jet stream widget
+
+This widget will show a line graph of the jet stream wind speed (wind at 250 hPa, about 10 km up) in m/s for the upcoming 15 hours. The x-axis is the hours and the y-axis is the wind speed. A strong jet stream overhead usually means poor seeing.
+
+The graph's background is colored by wind speed:
+
+| Wind at 250 hPa | Color |
+| --- | --- |
+| Below 20 m/s | Green |
+| 20–35 m/s | Yellow |
+| Above 35 m/s | Red |
+
 ### Aurora borealis widget
 
 This widget will show a graph of the forecasted Kp index for the upcoming 15 hours from page load. The x-axis is the hours and the y-axis is the Kp index (0–9). NOAA forecasts one Kp value per 3-hour block.
@@ -122,7 +135,7 @@ All free / open-data, no API key required.
 | Data | Source | Notes |
 | --- | --- | --- |
 | Zip code → coordinates | [Zippopotam.us](https://api.zippopotam.us/se/11122) | Swedish postcodes |
-| Weather, wind, precipitation, clouds, dew point, humidity | [Open-Meteo](https://open-meteo.com/) | Hourly, metric, CC BY 4.0 |
+| Weather, wind, precipitation, clouds, dew point, humidity, jet stream | [Open-Meteo](https://open-meteo.com/) | Hourly, metric, CC BY 4.0 |
 | Seeing | [7Timer! ASTRO](https://www.7timer.info/doc.php) | 3-hourly seeing scale |
 | Aurora Kp forecast | [NOAA SWPC Kp forecast](https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json) | 3-hour Kp values, covers the full 15 hours |
 | Moon phase | Calculated locally, no API | e.g. `astronomy-engine` (MIT) |

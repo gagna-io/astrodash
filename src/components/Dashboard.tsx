@@ -25,6 +25,7 @@ import { formatZip, normalizeZip } from "@/lib/zip";
 import SortableItem from "./SortableItem";
 import AuroraWidget from "./widgets/AuroraWidget";
 import CloudWidget from "./widgets/CloudWidget";
+import JetStreamWidget from "./widgets/JetStreamWidget";
 import MoonWidget from "./widgets/MoonWidget";
 import PrecipitationGraphWidget from "./widgets/PrecipitationGraphWidget";
 import PrecipitationWidget from "./widgets/PrecipitationWidget";
@@ -35,7 +36,7 @@ import WindWidget from "./widgets/WindWidget";
 
 const ZIP_KEY = "astrodash.zip";
 
-const DEFAULT_ORDER = ["moon", "rain", "precipitation", "wind", "cloud", "seeing", "aurora", "weather"];
+const DEFAULT_ORDER = ["moon", "rain", "precipitation", "wind", "cloud", "seeing", "aurora", "jetstream", "weather"];
 const FULL_WIDTH = new Set(["weather"]);
 const ORDER_KEY = "astrodash.order";
 
@@ -158,6 +159,7 @@ const Dashboard = () => {
     ) : (
       <Unavailable title="Aurora, Kp index" />
     );
+    nodes.jetstream = weather ? <JetStreamWidget weather={weather} /> : <Unavailable title="Jet stream, m/s" />;
     nodes.weather = weather ? <WeatherWidget weather={weather} /> : <Unavailable title="Weather report, 15 h" />;
   }
   const visible = order.filter((id) => id in nodes);

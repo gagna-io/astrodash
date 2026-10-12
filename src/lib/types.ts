@@ -6,6 +6,7 @@ export type HourlyWeather = {
   cloudCover: number; // %
   windSpeed: number; // m/s
   precipitation: number; // mm
+  jetStream: number; // m/s, wind at 250 hPa
 };
 
 export type SeeingBlock = {
