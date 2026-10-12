@@ -1,6 +1,7 @@
 import { useTheme } from "@mui/material/styles";
 import { formatHour } from "@/lib/time";
 import { HourlyWeather } from "@/lib/types";
+import HoverZones, { zonesFromPoints } from "./HoverZones";
 import Widget from "./Widget";
 
 const WIDTH = 320;
@@ -37,9 +38,7 @@ const PrecipitationGraphWidget = ({ weather }: { weather: HourlyWeather[] }) => 
         ))}
         <path d={line} fill="none" stroke={theme.palette.info.main} strokeWidth={2} />
         {weather.map((hour, i) => (
-          <circle key={hour.time} cx={x(i)} cy={y(hour.precipitation)} r={3} fill={theme.palette.info.main}>
-            <title>{`${formatHour(hour.time)}: ${hour.precipitation} mm`}</title>
-          </circle>
+          <circle key={hour.time} cx={x(i)} cy={y(hour.precipitation)} r={3} fill={theme.palette.info.main} />
         ))}
         {weather.map((hour, i) =>
           i % 3 === 0 ? (
@@ -55,6 +54,15 @@ const PrecipitationGraphWidget = ({ weather }: { weather: HourlyWeather[] }) => 
             </text>
           ) : null,
         )}
+        <HoverZones
+          zones={zonesFromPoints(
+            weather.map((hour, i) => ({ x: x(i), label: `${formatHour(hour.time)} · ${hour.precipitation} mm` })),
+            PAD.left,
+            WIDTH - PAD.right,
+          )}
+          top={PAD.top}
+          bottom={HEIGHT - PAD.bottom}
+        />
       </svg>
     </Widget>
   );

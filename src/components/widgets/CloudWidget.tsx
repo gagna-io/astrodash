@@ -9,7 +9,7 @@ const CloudWidget = ({ weather }: { weather: HourlyWeather[] }) => (
   <Widget title="Cloud coverage, hourly">
     <Box sx={{ display: "flex", alignItems: "flex-end", gap: "2px", height: 140, pt: 2 }}>
       {weather.map((hour) => (
-        <Tooltip key={hour.time} title={`${formatHour(hour.time)}: ${hour.cloudCover}%`}>
+        <Tooltip key={hour.time} title={`${formatHour(hour.time)} · ${hour.cloudCover}%`} followCursor>
           <Box
             sx={{
               flex: 1,

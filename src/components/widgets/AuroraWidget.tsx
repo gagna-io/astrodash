@@ -2,6 +2,7 @@ import { alpha, useTheme } from "@mui/material/styles";
 import { getKpBands } from "@/lib/aurora";
 import { FORECAST_HOURS, formatHour } from "@/lib/time";
 import { KpBlock } from "@/lib/types";
+import HoverZones from "./HoverZones";
 import Widget from "./Widget";
 
 const WIDTH = 320;
@@ -34,7 +35,12 @@ const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
   const steps = kp
     .map((block) => {
       const blockStart = Date.parse(block.time);
-      return { x1: x(clamp(blockStart)), x2: x(clamp(blockStart + 3 * HOUR)), y: y(block.kp) };
+      return {
+        x1: x(clamp(blockStart)),
+        x2: x(clamp(blockStart + 3 * HOUR)),
+        y: y(block.kp),
+        label: `${formatHour(block.time)}–${formatHour(new Date(blockStart + 3 * HOUR).toISOString())} · Kp ${block.kp.toFixed(1)}`,
+      };
     })
     .filter((step) => step.x2 > step.x1);
   const line = steps.map((step, i) => `${i === 0 ? "M" : "L"}${step.x1} ${step.y} H${step.x2}`).join(" ");
@@ -71,6 +77,7 @@ const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
           </text>
         ))}
         <path d={line} fill="none" stroke={theme.palette.text.primary} strokeWidth={2} />
+        <HoverZones zones={steps} top={PAD.top} bottom={HEIGHT - PAD.bottom} />
       </svg>
     </Widget>
   );

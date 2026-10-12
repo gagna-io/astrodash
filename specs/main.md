@@ -10,7 +10,7 @@ The following widgets will be available:
 - A widget with the weather report for the upcoming 15 hours.
 - A widget for the aurora borealis Kp index forecast
 - A weather report widget for wind speeds
-- A weather report widget for the probability of rain or snow
+- A weather report widget for the total rain or snow
 - A precipitation graph widget
 - A widget for the expected seeing conditions
 - Cloud coverage widget
@@ -51,7 +51,7 @@ This widget will show the weather report for the upcoming 15 hours as an hourly 
 
 ### Rainfall / Snowfall widget
 
-This widget will show a simple number in percentage, showing the probability of rain or snow during the upcoming 15 hours. The highest hourly probability is shown, so the user quickly knows if rain or snow is expected during the night.
+This widget will show a simple number: the total precipitation (rain or snow) in mm during the upcoming 15 hours, so the user quickly knows if rain or snow is expected during the night. It uses the same hourly mm data as the precipitation graph.
 
 ### Precipitation widget
 
@@ -68,6 +68,15 @@ This widget will show the cloud coverage for the upcoming 15 hours as an hourly 
 ### Seeing widget
 
 This widget will show a graph of the expected seeing conditions for the upcoming 15 hours. The x-axis is the time. The y-axis has two scales for the same values: the Pickering scale on the left side and arcseconds on the right side. Good seeing is at the top.
+
+The graph's background is colored by Pickering value:
+
+| Pickering | Color |
+| --- | --- |
+| 8–10 | Dark green |
+| 6–7 | Light green |
+| 4–5 | Yellow |
+| 1–3 | Dark red |
 
 The 7Timer! seeing value is converted to both scales:
 
@@ -134,9 +143,11 @@ The look and feel will follow standard MUI design. Use Emotion for styling.
 
 The application adapts to the system's dark mode setting: dark theme when the system uses dark mode, light theme otherwise.
 
-Widgets are laid out in a grid of 3 per row. The weather report widget spans the full width.
+Widgets are laid out in a grid of 3 per row. The weather report widget spans the full width. The layout is responsive and must work on mobile devices.
 
-The widgets are movable by drag and drop within the grid, using a drag handle in each widget's header. Dragging works with mouse, touch and keyboard. The widget order is saved in localStorage and restored on the next visit. The layout is responsive and must work on mobile devices.
+The widgets are movable by drag and drop within the grid, using a drag handle in each widget's header. Dragging works with mouse, touch and keyboard. The widget order is saved in localStorage and restored on the next visit.
+
+On every graph, hovering with the mouse shows the x and y values of the nearest point in a tooltip.
 
 ## Milestones
 

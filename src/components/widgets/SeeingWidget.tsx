@@ -1,7 +1,8 @@
-import { useTheme } from "@mui/material/styles";
+import { alpha, useTheme } from "@mui/material/styles";
 import { seeingToArcsec, seeingToPickering } from "@/lib/seeing";
 import { formatHour } from "@/lib/time";
 import { SeeingBlock } from "@/lib/types";
+import HoverZones, { zonesFromPoints } from "./HoverZones";
 import Widget from "./Widget";
 
 const WIDTH = 360;
@@ -19,10 +20,27 @@ const SeeingWidget = ({ seeing }: { seeing: SeeingBlock[] }) => {
   const y = (value: number) => PAD.top + ((value - 1) / 7) * (HEIGHT - PAD.top - PAD.bottom);
   const line = seeing.map((block, i) => `${i === 0 ? "M" : "L"}${x(times.at(i) ?? 0)} ${y(block.value)}`).join(" ");
   const text = theme.palette.text.secondary;
+  // Bands in 7Timer! values (Pickering = 11 − value), split halfway between levels.
+  const bands = [
+    { from: 1, to: 3.5, color: theme.palette.success.dark }, // Pickering 8–10
+    { from: 3.5, to: 5.5, color: theme.palette.success.light }, // Pickering 6–7
+    { from: 5.5, to: 7.5, color: theme.palette.warning.main }, // Pickering 4–5
+    { from: 7.5, to: 8, color: theme.palette.error.dark }, // Pickering 1–3
+  ];
 
   return (
     <Widget title="Seeing">
       <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Seeing forecast, next 15 hours">
+        {bands.map((band) => (
+          <rect
+            key={band.from}
+            x={PAD.left}
+            y={y(band.from)}
+            width={WIDTH - PAD.left - PAD.right}
+            height={y(band.to) - y(band.from)}
+            fill={alpha(band.color, 0.3)}
+          />
+        ))}
         {LEVELS.map((level) => (
           <g key={level}>
             <line
@@ -59,6 +77,18 @@ const SeeingWidget = ({ seeing }: { seeing: SeeingBlock[] }) => {
             </text>
           ) : null,
         )}
+        <HoverZones
+          zones={zonesFromPoints(
+            seeing.map((block, i) => ({
+              x: x(times.at(i) ?? 0),
+              label: `${formatHour(block.time)} · Pickering ${seeingToPickering(block.value)} · ${seeingToArcsec(block.value)}`,
+            })),
+            PAD.left,
+            WIDTH - PAD.right,
+          )}
+          top={PAD.top}
+          bottom={HEIGHT - PAD.bottom}
+        />
       </svg>
     </Widget>
   );

@@ -27,7 +27,6 @@ type OpenMeteoResponse = {
     cloud_cover: number[];
     wind_speed_10m: number[];
     precipitation: number[];
-    precipitation_probability: number[];
   };
 };
 
@@ -42,7 +41,7 @@ const getWeather = async (lat: number, lon: number, now: number): Promise<Hourly
   const { hourly } = await getJson<OpenMeteoResponse>(
     "https://api.open-meteo.com/v1/forecast" +
       `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=${FORECAST_HOURS + 2}` +
-      "&hourly=temperature_2m,dew_point_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,precipitation,precipitation_probability",
+      "&hourly=temperature_2m,dew_point_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,precipitation",
   );
   const currentHour = Math.floor(now / HOUR) * HOUR;
   return hourly.time
@@ -54,7 +53,6 @@ const getWeather = async (lat: number, lon: number, now: number): Promise<Hourly
       cloudCover: hourly.cloud_cover[i],
       windSpeed: hourly.wind_speed_10m[i],
       precipitation: hourly.precipitation[i],
-      precipitationProbability: hourly.precipitation_probability[i],
     }))
     .filter((hour) => Date.parse(hour.time) >= currentHour)
     .slice(0, FORECAST_HOURS);

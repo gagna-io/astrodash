@@ -1,6 +1,7 @@
 import { useTheme } from "@mui/material/styles";
 import { MoonAltitude } from "@/lib/moon";
 import { formatHour } from "@/lib/time";
+import HoverZones, { zonesFromPoints } from "./HoverZones";
 
 const WIDTH = 320;
 const HEIGHT = 150;
@@ -53,6 +54,18 @@ const MoonAltitudeChart = ({ altitudes }: { altitudes: MoonAltitude[] }) => {
           </text>
         ) : null,
       )}
+      <HoverZones
+        zones={zonesFromPoints(
+          altitudes.map((point, i) => ({
+            x: x(i),
+            label: `${formatHour(point.time)} · ${point.altitude.toFixed(1)}°`,
+          })),
+          PAD.left,
+          WIDTH - PAD.right,
+        )}
+        top={PAD.top}
+        bottom={HEIGHT - PAD.bottom}
+      />
     </svg>
   );
 };
