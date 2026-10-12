@@ -9,7 +9,7 @@ const PrecipitationWidget = ({ weather }: { weather: HourlyWeather[] }) => {
       <Typography variant="h3" sx={{ py: 2 }}>
         {max}%
       </Typography>
-      <Typography color="text.secondary">Highest probability in the next 24 hours</Typography>
+      <Typography color="text.secondary">Highest probability in the next 15 hours</Typography>
     </Widget>
   );
 };

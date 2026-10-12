@@ -1,10 +1,10 @@
 import type { HourlyWeather, KpBlock, SeeingBlock } from "@/lib/types";
+import { FORECAST_HOURS } from "@/lib/time";
 import { normalizeZip } from "@/lib/zip";
 
 const CACHE_SECONDS = 600;
 const HOUR = 3600 * 1000;
-const WINDOW = 24 * HOUR;
-const KP_WINDOW = 12 * HOUR;
+const WINDOW = FORECAST_HOURS * HOUR;
 
 const getJson = async <T>(url: string): Promise<T> => {
   const response = await fetch(url, { next: { revalidate: CACHE_SECONDS } });
@@ -41,7 +41,7 @@ type NoaaKpRow = { time_tag: string; kp: number };
 const getWeather = async (lat: number, lon: number, now: number): Promise<HourlyWeather[]> => {
   const { hourly } = await getJson<OpenMeteoResponse>(
     "https://api.open-meteo.com/v1/forecast" +
-      `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=26` +
+      `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=${FORECAST_HOURS + 2}` +
       "&hourly=temperature_2m,dew_point_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,precipitation,precipitation_probability",
   );
   const currentHour = Math.floor(now / HOUR) * HOUR;
@@ -57,12 +57,11 @@ const getWeather = async (lat: number, lon: number, now: number): Promise<Hourly
       precipitationProbability: hourly.precipitation_probability[i],
     }))
     .filter((hour) => Date.parse(hour.time) >= currentHour)
-    .slice(0, 24);
+    .slice(0, FORECAST_HOURS);
 };
 
-/** Keeps 3-hour blocks that overlap the next `window` milliseconds. */
-const inWindow = (time: number, now: number, window = WINDOW) =>
-  time > now - 3 * HOUR && time < now + window;
+/** Keeps 3-hour blocks that overlap the forecast window. */
+const inWindow = (time: number, now: number) => time > now - 3 * HOUR && time < now + WINDOW;
 
 const getSeeing = async (lat: number, lon: number, now: number): Promise<SeeingBlock[]> => {
   const { init, dataseries } = await getJson<SevenTimerResponse>(
@@ -86,7 +85,7 @@ const getKp = async (now: number): Promise<KpBlock[]> => {
   );
   return rows
     .map((row) => ({ time: Date.parse(`${row.time_tag}Z`), kp: row.kp }))
-    .filter((row) => inWindow(row.time, now, KP_WINDOW))
+    .filter((row) => inWindow(row.time, now))
     .map((row) => ({ time: new Date(row.time).toISOString(), kp: row.kp }));
 };
 

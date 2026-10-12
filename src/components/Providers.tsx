@@ -2,15 +2,20 @@
 
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { ReactNode } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { ReactNode, useMemo } from "react";
 
-const theme = createTheme();
+/** Follows the system dark mode setting. */
+const Providers = ({ children }: { children: ReactNode }) => {
+  const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
+  const theme = useMemo(() => createTheme({ palette: { mode: prefersDark ? "dark" : "light" } }), [prefersDark]);
 
-const Providers = ({ children }: { children: ReactNode }) => (
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    {children}
-  </ThemeProvider>
-);
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
+  );
+};
 
 export default Providers;

@@ -9,7 +9,7 @@ const WindWidget = ({ weather }: { weather: HourlyWeather[] }) => {
       <Typography variant="h3" sx={{ py: 2 }}>
         {Math.round(Math.min(...speeds))}m/s | {Math.round(Math.max(...speeds))}m/s
       </Typography>
-      <Typography color="text.secondary">Min | max in the next 24 hours</Typography>
+      <Typography color="text.secondary">Min | max in the next 15 hours</Typography>
     </Widget>
   );
 };

@@ -15,6 +15,7 @@ import { formatZip, normalizeZip } from "@/lib/zip";
 import AuroraWidget from "./widgets/AuroraWidget";
 import CloudWidget from "./widgets/CloudWidget";
 import MoonWidget from "./widgets/MoonWidget";
+import PrecipitationGraphWidget from "./widgets/PrecipitationGraphWidget";
 import PrecipitationWidget from "./widgets/PrecipitationWidget";
 import SeeingWidget from "./widgets/SeeingWidget";
 import WeatherWidget from "./widgets/WeatherWidget";
@@ -111,6 +112,11 @@ const Dashboard = () => {
         <Unavailable key="rain" title="Rain / snow" />
       ),
       weather ? (
+        <PrecipitationGraphWidget key="precipitation" weather={weather} />
+      ) : (
+        <Unavailable key="precipitation" title="Precipitation, mm" />
+      ),
+      weather ? (
         <WindWidget key="wind" weather={weather} />
       ) : (
         <Unavailable key="wind" title="Wind speeds" />
@@ -176,7 +182,7 @@ const Dashboard = () => {
             {forecast.weather ? (
               <WeatherWidget weather={forecast.weather} />
             ) : (
-              <Unavailable title="Weather report, 24 h" />
+              <Unavailable title="Weather report, 15 h" />
             )}
           </Grid>
         )}

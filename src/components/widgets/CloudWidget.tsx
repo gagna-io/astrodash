@@ -24,7 +24,7 @@ const CloudWidget = ({ weather }: { weather: HourlyWeather[] }) => (
     <Box sx={{ display: "flex", gap: "2px" }}>
       {weather.map((hour, i) => (
         <Typography key={hour.time} variant="caption" color="text.secondary" sx={{ flex: 1, textAlign: "center" }}>
-          {i % 6 === 0 ? formatHour(hour.time).slice(0, 2) : ""}
+          {i % 3 === 0 ? formatHour(hour.time).slice(0, 2) : ""}
         </Typography>
       ))}
     </Box>

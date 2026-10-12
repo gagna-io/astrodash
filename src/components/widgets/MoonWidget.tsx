@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { MoonAltitude, MoonState } from "@/lib/moon";
 import MoonAltitudeChart from "./MoonAltitudeChart";
@@ -26,17 +27,20 @@ type MoonWidgetProps = {
   altitudes?: MoonAltitude[];
 };
 
-const MoonWidget = ({ moon, altitudes }: MoonWidgetProps) => (
+const MoonWidget = ({ moon, altitudes }: MoonWidgetProps) => {
+  const theme = useTheme();
+
+  return (
   <Widget title="Moon phase">
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1, py: 1 }}>
       <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={`Moon ${moon.percentage}% full`}>
-        <circle cx={C} cy={C} r={R} fill="#2b2b33" />
+        <circle cx={C} cy={C} r={R} fill="#2b2b33" stroke={theme.palette.divider} />
         <path d={litPath(moon.angle)} fill="#f2eed8" />
       </svg>
       <Typography variant="h4">{moon.percentage}%</Typography>
     </Box>
     <Typography variant="caption" color="text.secondary">
-      Height over the horizon, next 12 h
+      Height over the horizon, next 15 h
     </Typography>
     {altitudes ? (
       <MoonAltitudeChart altitudes={altitudes} />
@@ -44,6 +48,7 @@ const MoonWidget = ({ moon, altitudes }: MoonWidgetProps) => (
       <Typography color="text.secondary">Enter a zip code to see the moon&apos;s height.</Typography>
     )}
   </Widget>
-);
+  );
+};
 
 export default MoonWidget;

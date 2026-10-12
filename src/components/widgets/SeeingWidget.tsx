@@ -22,7 +22,7 @@ const SeeingWidget = ({ seeing }: { seeing: SeeingBlock[] }) => {
 
   return (
     <Widget title="Seeing">
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Seeing forecast, next 24 hours">
+      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Seeing forecast, next 15 hours">
         {LEVELS.map((level) => (
           <g key={level}>
             <line

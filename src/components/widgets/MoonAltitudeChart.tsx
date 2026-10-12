@@ -22,7 +22,7 @@ const MoonAltitudeChart = ({ altitudes }: { altitudes: MoonAltitude[] }) => {
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       width="100%"
       role="img"
-      aria-label="Moon height over the horizon, next 12 hours"
+      aria-label="Moon height over the horizon, next 15 hours"
     >
       <defs>
         <clipPath id="above-horizon">

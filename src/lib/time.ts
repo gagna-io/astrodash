@@ -1,3 +1,6 @@
+/** How far ahead every forecast and graph looks, from page load. */
+export const FORECAST_HOURS = 15;
+
 const formatter = new Intl.DateTimeFormat("sv-SE", {
   timeZone: "Europe/Stockholm",
   hour: "2-digit",

@@ -1,6 +1,6 @@
 import { alpha, useTheme } from "@mui/material/styles";
 import { getKpBands } from "@/lib/aurora";
-import { formatHour } from "@/lib/time";
+import { FORECAST_HOURS, formatHour } from "@/lib/time";
 import { KpBlock } from "@/lib/types";
 import Widget from "./Widget";
 
@@ -8,7 +8,6 @@ const WIDTH = 320;
 const HEIGHT = 170;
 const PAD = { left: 24, right: 8, top: 8, bottom: 20 };
 const HOUR = 3600 * 1000;
-const HOURS = 12;
 const KP_MAX = 9;
 
 type AuroraWidgetProps = {
@@ -17,11 +16,11 @@ type AuroraWidgetProps = {
   latitude: number;
 };
 
-/** Step graph of the Kp forecast over the next 12 hours, on a green/yellow/red probability background for the latitude. */
+/** Step graph of the Kp forecast over the forecast window, on a green/yellow/red probability background for the latitude. */
 const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
   const theme = useTheme();
   const from = start.getTime();
-  const to = from + HOURS * HOUR;
+  const to = from + FORECAST_HOURS * HOUR;
   const x = (time: number) => PAD.left + ((time - from) / (to - from)) * (WIDTH - PAD.left - PAD.right);
   const y = (value: number) => PAD.top + ((KP_MAX - value) / KP_MAX) * (HEIGHT - PAD.top - PAD.bottom);
   const clamp = (time: number) => Math.min(Math.max(time, from), to);
@@ -42,8 +41,8 @@ const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
   const text = theme.palette.text.secondary;
 
   return (
-    <Widget title="Aurora, Kp index next 12 h">
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Kp index forecast, next 12 hours">
+    <Widget title="Aurora, Kp index next 15 h">
+      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Kp index forecast, next 15 hours">
         {bands.map((band) => (
           <rect
             key={band.color}
@@ -59,13 +58,13 @@ const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
             {tick}
           </text>
         ))}
-        {[0, 3, 6, 9, 12].map((hours) => (
+        {[0, 3, 6, 9, 12, 15].map((hours) => (
           <text
             key={hours}
             x={x(from + hours * HOUR)}
             y={HEIGHT - 4}
             fontSize={10}
-            textAnchor={hours === 0 ? "start" : hours === HOURS ? "end" : "middle"}
+            textAnchor={hours === 0 ? "start" : hours === FORECAST_HOURS ? "end" : "middle"}
             fill={text}
           >
             {formatHour(new Date(from + hours * HOUR).toISOString())}

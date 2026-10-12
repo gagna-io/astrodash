@@ -1,3 +1,4 @@
+import { FORECAST_HOURS } from "./time";
 import { Body, Equator, Horizon, Illumination, MoonPhase, Observer } from "astronomy-engine";
 
 export type MoonState = {
@@ -16,12 +17,11 @@ export type MoonAltitude = {
 };
 
 const STEP_MINUTES = 30;
-const HOURS = 12;
 
-/** Moon altitude every 30 minutes for the 12 hours from `start`, seen from the given location. */
+/** Moon altitude every 30 minutes for the forecast hours from `start`, seen from the given location. */
 export const getMoonAltitudes = (latitude: number, longitude: number, start: Date): MoonAltitude[] => {
   const observer = new Observer(latitude, longitude, 0);
-  return Array.from({ length: (HOURS * 60) / STEP_MINUTES + 1 }, (_, i) => {
+  return Array.from({ length: (FORECAST_HOURS * 60) / STEP_MINUTES + 1 }, (_, i) => {
     const date = new Date(start.getTime() + i * STEP_MINUTES * 60 * 1000);
     const { ra, dec } = Equator(Body.Moon, date, observer, true, true);
     return {
