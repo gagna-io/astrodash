@@ -6,12 +6,23 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import { getMoonAltitudes, getMoonState } from "@/lib/moon";
 import { Forecast } from "@/lib/types";
 import { formatZip, normalizeZip } from "@/lib/zip";
+import SortableItem from "./SortableItem";
 import AuroraWidget from "./widgets/AuroraWidget";
 import CloudWidget from "./widgets/CloudWidget";
 import MoonWidget from "./widgets/MoonWidget";
@@ -23,6 +34,29 @@ import Widget from "./widgets/Widget";
 import WindWidget from "./widgets/WindWidget";
 
 const ZIP_KEY = "astrodash.zip";
+
+const DEFAULT_ORDER = ["moon", "rain", "precipitation", "wind", "cloud", "seeing", "aurora", "weather"];
+const FULL_WIDTH = new Set(["weather"]);
+const ORDER_KEY = "astrodash.order";
+
+/** Saved widget order; unknown ids are dropped and new widgets are appended. */
+const readOrder = () => {
+  try {
+    const saved: unknown = JSON.parse(localStorage.getItem(ORDER_KEY) ?? "[]");
+    const known = Array.isArray(saved) ? saved.filter((id) => DEFAULT_ORDER.includes(id)) : [];
+    return [...known, ...DEFAULT_ORDER.filter((id) => !known.includes(id))];
+  } catch {
+    return DEFAULT_ORDER;
+  }
+};
+
+const saveOrder = (order: string[]) => {
+  try {
+    localStorage.setItem(ORDER_KEY, JSON.stringify(order));
+  } catch {
+    // Storage unavailable; the order just isn't remembered.
+  }
+};
 
 const readZip = () => {
   try {
@@ -55,6 +89,11 @@ const Dashboard = () => {
   const [input, setInput] = useState(() => (zip ? formatZip(zip) : ""));
   const [inputError, setInputError] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
+  const [order, setOrder] = useState(readOrder);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
   useEffect(() => {
     if (!zip) {
@@ -100,44 +139,36 @@ const Dashboard = () => {
     [forecast, loadedAt],
   );
 
-  const widgets: ReactNode[] = [
-    <MoonWidget key="moon" moon={moon} altitudes={altitudes} />,
-  ];
+  const nodes: Record<string, ReactNode> = {
+    moon: <MoonWidget moon={moon} altitudes={altitudes} />,
+  };
   if (forecast) {
     const { weather, seeing, kp } = forecast;
-    widgets.push(
-      weather ? (
-        <PrecipitationWidget key="rain" weather={weather} />
-      ) : (
-        <Unavailable key="rain" title="Rain / snow" />
-      ),
-      weather ? (
-        <PrecipitationGraphWidget key="precipitation" weather={weather} />
-      ) : (
-        <Unavailable key="precipitation" title="Precipitation, mm" />
-      ),
-      weather ? (
-        <WindWidget key="wind" weather={weather} />
-      ) : (
-        <Unavailable key="wind" title="Wind speeds" />
-      ),
-      weather ? (
-        <CloudWidget key="cloud" weather={weather} />
-      ) : (
-        <Unavailable key="cloud" title="Cloud coverage, hourly" />
-      ),
-      seeing ? (
-        <SeeingWidget key="seeing" seeing={seeing} />
-      ) : (
-        <Unavailable key="seeing" title="Seeing" />
-      ),
-      kp ? (
-        <AuroraWidget key="aurora" kp={kp} start={loadedAt} latitude={forecast.latitude} />
-      ) : (
-        <Unavailable key="aurora" title="Aurora, Kp index" />
-      ),
+    nodes.rain = weather ? <PrecipitationWidget weather={weather} /> : <Unavailable title="Rain / snow" />;
+    nodes.precipitation = weather ? (
+      <PrecipitationGraphWidget weather={weather} />
+    ) : (
+      <Unavailable title="Precipitation, mm" />
     );
+    nodes.wind = weather ? <WindWidget weather={weather} /> : <Unavailable title="Wind speeds" />;
+    nodes.cloud = weather ? <CloudWidget weather={weather} /> : <Unavailable title="Cloud coverage, hourly" />;
+    nodes.seeing = seeing ? <SeeingWidget seeing={seeing} /> : <Unavailable title="Seeing" />;
+    nodes.aurora = kp ? (
+      <AuroraWidget kp={kp} start={loadedAt} latitude={forecast.latitude} />
+    ) : (
+      <Unavailable title="Aurora, Kp index" />
+    );
+    nodes.weather = weather ? <WeatherWidget weather={weather} /> : <Unavailable title="Weather report, 15 h" />;
   }
+  const visible = order.filter((id) => id in nodes);
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    if (over && active.id !== over.id) {
+      const next = arrayMove(order, order.indexOf(String(active.id)), order.indexOf(String(over.id)));
+      setOrder(next);
+      saveOrder(next);
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 4 } }}>
@@ -171,22 +202,17 @@ const Dashboard = () => {
           {result.error}
         </Alert>
       )}
-      <Grid container spacing={2}>
-        {widgets.map((widget, i) => (
-          <Grid key={i} size={{ xs: 12, sm: 6, md: 4 }}>
-            {widget}
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={visible} strategy={rectSortingStrategy}>
+          <Grid container spacing={2}>
+            {visible.map((id) => (
+              <SortableItem key={id} id={id} size={FULL_WIDTH.has(id) ? 12 : { xs: 12, sm: 6, md: 4 }}>
+                {nodes[id]}
+              </SortableItem>
+            ))}
           </Grid>
-        ))}
-        {forecast && (
-          <Grid size={12}>
-            {forecast.weather ? (
-              <WeatherWidget weather={forecast.weather} />
-            ) : (
-              <Unavailable title="Weather report, 15 h" />
-            )}
-          </Grid>
-        )}
-      </Grid>
+        </SortableContext>
+      </DndContext>
     </Container>
   );
 };

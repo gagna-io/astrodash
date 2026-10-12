@@ -134,7 +134,9 @@ The look and feel will follow standard MUI design. Use Emotion for styling.
 
 The application adapts to the system's dark mode setting: dark theme when the system uses dark mode, light theme otherwise.
 
-Widgets are laid out in a grid of 3 per row. The weather report widget spans the full width, in its own row below the other widgets. The layout is responsive and must work on mobile devices.
+Widgets are laid out in a grid of 3 per row. The weather report widget spans the full width.
+
+The widgets are movable by drag and drop within the grid, using a drag handle in each widget's header. Dragging works with mouse, touch and keyboard. The widget order is saved in localStorage and restored on the next visit. The layout is responsive and must work on mobile devices.
 
 ## Milestones
 
