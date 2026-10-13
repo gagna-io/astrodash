@@ -7,7 +7,7 @@ This application is a lightweight application that will show a dashboard with re
 The following widgets will be available:
 
 - A widget showing the current phase of the moon as an image and as percentage of the full moon. 100% means full moon.
-- A widget with the weather report for the upcoming 15 hours.
+- A widget with the weather report for the forecast window (page load to 10:00).
 - A widget for the aurora borealis Kp index forecast
 - A weather report widget for wind speeds
 - A weather report widget for the total rain or snow
@@ -18,7 +18,7 @@ The following widgets will be available:
 
 The data for all of these widgets will be fetched from public API's relevant to each widget.
 
-All forecasts cover a fixed 15 hours from page load time.
+All widgets show data from page load time to 10:00 (Swedish time) the day after the load day. For example, a page loaded at 09:00 on Monday shows data until 10:00 on Tuesday.
 
 ## Users
 
@@ -36,7 +36,7 @@ This is for astrophotographers trying to decide if it's worth starting a nights 
 - A combined Yes/No verdict.
 - User accounts or saved settings beyond the cached data.
 - Imperial units.
-- Forecasts beyond 15 hours.
+- Forecasts beyond 10:00 the following morning.
 
 ## Features
 
@@ -44,31 +44,31 @@ This is for astrophotographers trying to decide if it's worth starting a nights 
 
 This widget will show the current state of the moon as an image. A new image is created for this, drawn to match the current phase. Under the moon image, a percentage will be shown to further visualize the moons state. 0% is new moon and 100% is full moon. The phase shown is the phase right now.
 
-The widget also shows a graph of the moon's height over the horizon for the 15 hours from page load, for the user's zip code location.
+The widget also shows a graph of the moon's height over the horizon from page load to 10:00 the following morning, for the user's zip code location.
 
 ### Weather report widget
 
-This widget will show the weather report for the upcoming 15 hours as an hourly table: clouds, winds, precipitation, dew point, temperature and humidity.
+This widget will show the weather report for the forecast window (page load to 10:00) as an hourly table: clouds, winds, precipitation, dew point, temperature and humidity.
 
 ### Rainfall / Snowfall widget
 
-This widget will show a simple number: the total precipitation (rain or snow) in mm during the upcoming 15 hours, so the user quickly knows if rain or snow is expected during the night. It uses the same hourly mm data as the precipitation graph.
+This widget will show a simple number: the total precipitation (rain or snow) in mm during the forecast window (page load to 10:00), so the user quickly knows if rain or snow is expected during the night. It uses the same hourly mm data as the precipitation graph.
 
 ### Precipitation widget
 
-This widget will show a line graph of the precipitation only, in mm, for the upcoming 15 hours. The x-axis is the hours and the y-axis is the precipitation in mm.
+This widget will show a line graph of the precipitation only, in mm, for the forecast window (page load to 10:00). The x-axis is the hours and the y-axis is the precipitation in mm.
 
 ### Wind speeds widget
 
-This widget will show the expected wind speeds throughout the upcoming 15 hours. The information will show min winds and max winds expected in the example format: 2m/s | 10m/s
+This widget will show the expected wind speeds throughout the forecast window (page load to 10:00). The information will show min winds and max winds expected in the example format: 2m/s | 10m/s
 
 ### Cloud coverage widget
 
-This widget will show the cloud coverage for the upcoming 15 hours as an hourly display.
+This widget will show the cloud coverage for the forecast window (page load to 10:00) as an hourly display.
 
 ### Seeing widget
 
-This widget will show a graph of the expected seeing conditions for the upcoming 15 hours. The x-axis is the time. The y-axis has two scales for the same values: the Pickering scale on the left side and arcseconds on the right side. Good seeing is at the top.
+This widget will show a graph of the expected seeing conditions for the forecast window (page load to 10:00). The x-axis is the time. The y-axis has two scales for the same values: the Pickering scale on the left side and arcseconds on the right side. Good seeing is at the top.
 
 The graph's background is colored by Pickering value:
 
@@ -94,7 +94,7 @@ The 7Timer! seeing value is converted to both scales:
 
 ### Jet stream widget
 
-This widget will show a line graph of the jet stream wind speed (wind at 250 hPa, about 10 km up) in m/s for the upcoming 15 hours. The x-axis is the hours and the y-axis is the wind speed. A strong jet stream overhead usually means poor seeing.
+This widget will show a line graph of the jet stream wind speed (wind at 250 hPa, about 10 km up) in m/s for the forecast window (page load to 10:00). The x-axis is the hours and the y-axis is the wind speed. A strong jet stream overhead usually means poor seeing.
 
 The graph's background is colored by wind speed:
 
@@ -106,7 +106,7 @@ The graph's background is colored by wind speed:
 
 ### Aurora borealis widget
 
-This widget will show a graph of the forecasted Kp index for the upcoming 15 hours from page load. The x-axis is the hours and the y-axis is the Kp index (0–9). NOAA forecasts one Kp value per 3-hour block.
+This widget will show a graph of the forecasted Kp index from page load to 10:00 the following morning. The x-axis is the hours and the y-axis is the Kp index (0–9). NOAA forecasts one Kp value per 3-hour block.
 
 The graph's background visualizes the probability of aurora in colors, based on the zip code's latitude. Each latitude has a threshold Kp: the lowest Kp at which aurora reaches it.
 
@@ -137,7 +137,7 @@ All free / open-data, no API key required.
 | Zip code → coordinates | [Zippopotam.us](https://api.zippopotam.us/se/11122) | Swedish postcodes |
 | Weather, wind, precipitation, clouds, dew point, humidity, jet stream | [Open-Meteo](https://open-meteo.com/) | Hourly, metric, CC BY 4.0 |
 | Seeing | [7Timer! ASTRO](https://www.7timer.info/doc.php) | 3-hourly seeing scale |
-| Aurora Kp forecast | [NOAA SWPC Kp forecast](https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json) | 3-hour Kp values, covers the full 15 hours |
+| Aurora Kp forecast | [NOAA SWPC Kp forecast](https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json) | 3-hour Kp values, covers the full window |
 | Moon phase | Calculated locally, no API | e.g. `astronomy-engine` (MIT) |
 
 ## Technical constraints
@@ -159,6 +159,8 @@ The application adapts to the system's dark mode setting: dark theme when the sy
 Widgets are laid out in a grid of 3 per row. The weather report widget spans the full width. The layout is responsive and must work on mobile devices.
 
 The widgets are movable by drag and drop within the grid, using a drag handle in each widget's header. Dragging works with mouse, touch and keyboard. The widget order is saved in localStorage and restored on the next visit.
+
+All bars and graph lines use the same blue, in both light and dark mode.
 
 On every graph, hovering with the mouse shows the x and y values of the nearest point in a tooltip.
 

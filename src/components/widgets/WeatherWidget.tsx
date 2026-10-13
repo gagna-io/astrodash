@@ -11,7 +11,7 @@ import Widget from "./Widget";
 const COLUMNS = ["Time", "Temp °C", "Dew °C", "Hum %", "Cloud %", "Wind m/s", "Prec mm"];
 
 const WeatherWidget = ({ weather }: { weather: HourlyWeather[] }) => (
-  <Widget title="Weather report, 15 h">
+  <Widget title="Weather report until 10:00">
     <TableContainer sx={{ maxHeight: 320 }}>
       <Table size="small" stickyHeader>
         <TableHead>

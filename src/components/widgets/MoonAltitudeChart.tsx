@@ -2,6 +2,7 @@ import { useTheme } from "@mui/material/styles";
 import { MoonAltitude } from "@/lib/moon";
 import { formatHour } from "@/lib/time";
 import HoverZones, { zonesFromPoints } from "./HoverZones";
+import { CHART_COLOR } from "./chartColor";
 
 const WIDTH = 320;
 const HEIGHT = 150;
@@ -23,7 +24,7 @@ const MoonAltitudeChart = ({ altitudes }: { altitudes: MoonAltitude[] }) => {
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       width="100%"
       role="img"
-      aria-label="Moon height over the horizon, next 15 hours"
+      aria-label="Moon height over the horizon, until 10:00"
     >
       <defs>
         <clipPath id="above-horizon">
@@ -46,7 +47,7 @@ const MoonAltitudeChart = ({ altitudes }: { altitudes: MoonAltitude[] }) => {
         </g>
       ))}
       <path d={line} fill="none" stroke={theme.palette.divider} strokeWidth={2} />
-      <path d={line} fill="none" stroke={theme.palette.primary.main} strokeWidth={2} clipPath="url(#above-horizon)" />
+      <path d={line} fill="none" stroke={CHART_COLOR} strokeWidth={2} clipPath="url(#above-horizon)" />
       {altitudes.map((point, i) =>
         i % 6 === 0 ? (
           <text key={point.time} x={x(i)} y={HEIGHT - 4} fontSize={10} textAnchor="middle" fill={text}>

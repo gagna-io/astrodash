@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import { formatHour } from "@/lib/time";
 import { HourlyWeather } from "@/lib/types";
 import Widget from "./Widget";
+import { CHART_COLOR } from "./chartColor";
 
 const CloudWidget = ({ weather }: { weather: HourlyWeather[] }) => (
   <Widget title="Cloud coverage, hourly">
@@ -14,7 +15,7 @@ const CloudWidget = ({ weather }: { weather: HourlyWeather[] }) => (
             sx={{
               flex: 1,
               height: `${Math.max(hour.cloudCover, 2)}%`,
-              bgcolor: "primary.light",
+              bgcolor: CHART_COLOR,
               borderRadius: "2px 2px 0 0",
             }}
           />

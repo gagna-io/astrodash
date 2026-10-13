@@ -40,7 +40,7 @@ const MoonWidget = ({ moon, altitudes }: MoonWidgetProps) => {
       <Typography variant="h4">{moon.percentage}%</Typography>
     </Box>
     <Typography variant="caption" color="text.secondary">
-      Height over the horizon, next 15 h
+      Height over the horizon, until 10:00
     </Typography>
     {altitudes ? (
       <MoonAltitudeChart altitudes={altitudes} />

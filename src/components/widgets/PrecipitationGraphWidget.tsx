@@ -3,6 +3,7 @@ import { formatHour } from "@/lib/time";
 import { HourlyWeather } from "@/lib/types";
 import HoverZones, { zonesFromPoints } from "./HoverZones";
 import Widget from "./Widget";
+import { CHART_COLOR } from "./chartColor";
 
 const WIDTH = 320;
 const HEIGHT = 170;
@@ -36,9 +37,9 @@ const PrecipitationGraphWidget = ({ weather }: { weather: HourlyWeather[] }) => 
             </text>
           </g>
         ))}
-        <path d={line} fill="none" stroke={theme.palette.info.main} strokeWidth={2} />
+        <path d={line} fill="none" stroke={CHART_COLOR} strokeWidth={2} />
         {weather.map((hour, i) => (
-          <circle key={hour.time} cx={x(i)} cy={y(hour.precipitation)} r={3} fill={theme.palette.info.main} />
+          <circle key={hour.time} cx={x(i)} cy={y(hour.precipitation)} r={3} fill={CHART_COLOR} />
         ))}
         {weather.map((hour, i) =>
           i % 3 === 0 ? (

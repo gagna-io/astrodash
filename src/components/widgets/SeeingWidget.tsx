@@ -4,6 +4,7 @@ import { formatHour } from "@/lib/time";
 import { SeeingBlock } from "@/lib/types";
 import HoverZones, { zonesFromPoints } from "./HoverZones";
 import Widget from "./Widget";
+import { CHART_COLOR } from "./chartColor";
 
 const WIDTH = 360;
 const HEIGHT = 200;
@@ -30,7 +31,7 @@ const SeeingWidget = ({ seeing }: { seeing: SeeingBlock[] }) => {
 
   return (
     <Widget title="Seeing">
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Seeing forecast, next 15 hours">
+      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Seeing forecast, until 10:00">
         {bands.map((band) => (
           <rect
             key={band.from}
@@ -59,9 +60,9 @@ const SeeingWidget = ({ seeing }: { seeing: SeeingBlock[] }) => {
             </text>
           </g>
         ))}
-        <path d={line} fill="none" stroke={theme.palette.primary.main} strokeWidth={2} />
+        <path d={line} fill="none" stroke={CHART_COLOR} strokeWidth={2} />
         {seeing.map((block, i) => (
-          <circle key={block.time} cx={x(times.at(i) ?? 0)} cy={y(block.value)} r={3} fill={theme.palette.primary.main} />
+          <circle key={block.time} cx={x(times.at(i) ?? 0)} cy={y(block.value)} r={3} fill={CHART_COLOR} />
         ))}
         {seeing.map((block, i) =>
           i % 2 === 0 ? (

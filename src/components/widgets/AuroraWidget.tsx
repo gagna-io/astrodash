@@ -1,9 +1,10 @@
 import { alpha, useTheme } from "@mui/material/styles";
 import { getKpBands } from "@/lib/aurora";
-import { FORECAST_HOURS, formatHour } from "@/lib/time";
+import { formatHour, getForecastEnd } from "@/lib/time";
 import { KpBlock } from "@/lib/types";
 import HoverZones from "./HoverZones";
 import Widget from "./Widget";
+import { CHART_COLOR } from "./chartColor";
 
 const WIDTH = 320;
 const HEIGHT = 170;
@@ -21,7 +22,8 @@ type AuroraWidgetProps = {
 const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
   const theme = useTheme();
   const from = start.getTime();
-  const to = from + FORECAST_HOURS * HOUR;
+  const to = getForecastEnd(start).getTime();
+  const ticks = Array.from({ length: Math.floor((to - from) / (3 * HOUR)) + 1 }, (_, i) => from + i * 3 * HOUR);
   const x = (time: number) => PAD.left + ((time - from) / (to - from)) * (WIDTH - PAD.left - PAD.right);
   const y = (value: number) => PAD.top + ((KP_MAX - value) / KP_MAX) * (HEIGHT - PAD.top - PAD.bottom);
   const clamp = (time: number) => Math.min(Math.max(time, from), to);
@@ -47,8 +49,8 @@ const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
   const text = theme.palette.text.secondary;
 
   return (
-    <Widget title="Aurora, Kp index next 15 h">
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Kp index forecast, next 15 hours">
+    <Widget title="Aurora, Kp index until 10:00">
+      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Kp index forecast, until 10:00">
         {bands.map((band) => (
           <rect
             key={band.color}
@@ -64,19 +66,19 @@ const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
             {tick}
           </text>
         ))}
-        {[0, 3, 6, 9, 12, 15].map((hours) => (
+        {ticks.map((tick, i) => (
           <text
-            key={hours}
-            x={x(from + hours * HOUR)}
+            key={tick}
+            x={x(tick)}
             y={HEIGHT - 4}
             fontSize={10}
-            textAnchor={hours === 0 ? "start" : hours === FORECAST_HOURS ? "end" : "middle"}
+            textAnchor={i === 0 ? "start" : x(tick) > WIDTH - 24 ? "end" : "middle"}
             fill={text}
           >
-            {formatHour(new Date(from + hours * HOUR).toISOString())}
+            {formatHour(new Date(tick).toISOString())}
           </text>
         ))}
-        <path d={line} fill="none" stroke={theme.palette.text.primary} strokeWidth={2} />
+        <path d={line} fill="none" stroke={CHART_COLOR} strokeWidth={2} />
         <HoverZones zones={steps} top={PAD.top} bottom={HEIGHT - PAD.bottom} />
       </svg>
     </Widget>

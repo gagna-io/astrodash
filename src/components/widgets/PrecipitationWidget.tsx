@@ -9,7 +9,7 @@ const PrecipitationWidget = ({ weather }: { weather: HourlyWeather[] }) => {
       <Typography variant="h3" sx={{ py: 2 }}>
         {total.toFixed(1)} mm
       </Typography>
-      <Typography color="text.secondary">Total in the next 15 hours</Typography>
+      <Typography color="text.secondary">Total until 10:00</Typography>
     </Widget>
   );
 };

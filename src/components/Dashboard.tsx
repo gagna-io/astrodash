@@ -160,7 +160,7 @@ const Dashboard = () => {
       <Unavailable title="Aurora, Kp index" />
     );
     nodes.jetstream = weather ? <JetStreamWidget weather={weather} /> : <Unavailable title="Jet stream, m/s" />;
-    nodes.weather = weather ? <WeatherWidget weather={weather} /> : <Unavailable title="Weather report, 15 h" />;
+    nodes.weather = weather ? <WeatherWidget weather={weather} /> : <Unavailable title="Weather report until 10:00" />;
   }
   const visible = order.filter((id) => id in nodes);
 

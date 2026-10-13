@@ -3,6 +3,7 @@ import { formatHour } from "@/lib/time";
 import { HourlyWeather } from "@/lib/types";
 import HoverZones, { zonesFromPoints } from "./HoverZones";
 import Widget from "./Widget";
+import { CHART_COLOR } from "./chartColor";
 
 const WIDTH = 320;
 const HEIGHT = 170;
@@ -25,7 +26,7 @@ const JetStreamWidget = ({ weather }: { weather: HourlyWeather[] }) => {
 
   return (
     <Widget title="Jet stream, m/s">
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Jet stream wind speed, next 15 hours">
+      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" role="img" aria-label="Jet stream wind speed, until 10:00">
         {bands.map((band) => (
           <rect
             key={band.from}
@@ -41,9 +42,9 @@ const JetStreamWidget = ({ weather }: { weather: HourlyWeather[] }) => {
             {tick}
           </text>
         ))}
-        <path d={line} fill="none" stroke={theme.palette.text.primary} strokeWidth={2} />
+        <path d={line} fill="none" stroke={CHART_COLOR} strokeWidth={2} />
         {weather.map((hour, i) => (
-          <circle key={hour.time} cx={x(i)} cy={y(hour.jetStream)} r={3} fill={theme.palette.text.primary} />
+          <circle key={hour.time} cx={x(i)} cy={y(hour.jetStream)} r={3} fill={CHART_COLOR} />
         ))}
         {weather.map((hour, i) =>
           i % 3 === 0 ? (

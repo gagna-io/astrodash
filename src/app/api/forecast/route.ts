@@ -1,10 +1,9 @@
 import type { HourlyWeather, KpBlock, SeeingBlock } from "@/lib/types";
-import { FORECAST_HOURS } from "@/lib/time";
+import { getForecastEnd } from "@/lib/time";
 import { normalizeZip } from "@/lib/zip";
 
 const CACHE_SECONDS = 600;
 const HOUR = 3600 * 1000;
-const WINDOW = FORECAST_HOURS * HOUR;
 
 const getJson = async <T>(url: string): Promise<T> => {
   const response = await fetch(url, { next: { revalidate: CACHE_SECONDS } });
@@ -41,10 +40,11 @@ type NoaaKpRow = { time_tag: string; kp: number };
 const getWeather = async (lat: number, lon: number, now: number): Promise<HourlyWeather[]> => {
   const { hourly } = await getJson<OpenMeteoResponse>(
     "https://api.open-meteo.com/v1/forecast" +
-      `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=${FORECAST_HOURS + 2}` +
+      `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=36` +
       "&hourly=temperature_2m,dew_point_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,precipitation,wind_speed_250hPa",
   );
   const currentHour = Math.floor(now / HOUR) * HOUR;
+  const end = getForecastEnd(new Date(now)).getTime();
   return hourly.time
     .map((time, i) => ({
       time: new Date(`${time}:00Z`).toISOString(),
@@ -56,12 +56,12 @@ const getWeather = async (lat: number, lon: number, now: number): Promise<Hourly
       precipitation: hourly.precipitation[i],
       jetStream: hourly.wind_speed_250hPa[i],
     }))
-    .filter((hour) => Date.parse(hour.time) >= currentHour)
-    .slice(0, FORECAST_HOURS);
+    .filter((hour) => Date.parse(hour.time) >= currentHour && Date.parse(hour.time) <= end);
 };
 
 /** Keeps 3-hour blocks that overlap the forecast window. */
-const inWindow = (time: number, now: number) => time > now - 3 * HOUR && time < now + WINDOW;
+const inWindow = (time: number, now: number) =>
+  time > now - 3 * HOUR && time < getForecastEnd(new Date(now)).getTime();
 
 const getSeeing = async (lat: number, lon: number, now: number): Promise<SeeingBlock[]> => {
   const { init, dataseries } = await getJson<SevenTimerResponse>(
