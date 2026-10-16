@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+import Grid, { GridProps } from "@mui/material/Grid";
 import {
   closestCenter,
   DndContext,
@@ -40,7 +40,12 @@ import WindWidget from "./widgets/WindWidget";
 const ZIP_KEY = "astrodash.zip";
 
 const DEFAULT_ORDER = ["summary", "moon", "rain", "precipitation", "wind", "cloud", "seeing", "aurora", "jetstream", "temperature", "weather"];
-const FULL_WIDTH = new Set(["weather"]);
+/** Grid sizes per widget; the rest take a third of the row (half on tablets). */
+const SIZES: Record<string, GridProps["size"]> = {
+  summary: { xs: 12, md: 8 }, // Decision widget, two thirds
+  weather: 12,
+};
+const DEFAULT_SIZE: GridProps["size"] = { xs: 12, sm: 6, md: 4 };
 const ORDER_KEY = "astrodash.order";
 
 /** Saved widget order; unknown ids are dropped and new widgets are appended. */
@@ -222,7 +227,7 @@ const Dashboard = () => {
         <SortableContext items={visible} strategy={rectSortingStrategy}>
           <Grid container spacing={2}>
             {visible.map((id) => (
-              <SortableItem key={id} id={id} size={FULL_WIDTH.has(id) ? 12 : { xs: 12, sm: 6, md: 4 }}>
+              <SortableItem key={id} id={id} size={SIZES[id] ?? DEFAULT_SIZE}>
                 {nodes[id]}
               </SortableItem>
             ))}

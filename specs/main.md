@@ -6,7 +6,7 @@ This application is a lightweight application that will show a dashboard with re
 
 The following widgets will be available:
 
-- A summary widget: is tonight good for astrophotography?
+- A Decision widget: is tonight good for astrophotography?
 - A widget showing the current phase of the moon as an image and as percentage of the full moon. 100% means full moon.
 - A widget with the weather report for the forecast window (page load to 10:00).
 - A widget for the aurora borealis Kp index forecast
@@ -42,11 +42,11 @@ This is for astrophotographers trying to decide if it's worth starting a nights 
 
 ## Features
 
-### Summary widget
+### Decision widget
 
 A simple answer to "Is this night good for astrophotography?", shown as a background color with the reasons listed. Only the upcoming astronomical night is checked (sun more than 18° below the horizon), calculated for the zip code location. Above the astronomical night's start and end times, the widget shows sunset and sunrise.
 
-Below it, separate smaller red / yellow / green boxes, each a third of the summary widget's width, show the same rating for each of the upcoming 3 nights (tonight and the next two), labeled with the weekday ("Mon", "Tue" etc.) and the reasons for red or yellow. The summary uses forecasts for these upcoming days (about 3 days ahead, the range of the seeing and Kp forecasts), not just the window up to 10:00.
+Below it, separate smaller red / yellow / green boxes, each a third of the Decision widget's width, show the same rating for each of the upcoming 3 nights (tonight and the next two), labeled with the weekday ("Mon", "Tue" etc.) and the reasons for red or yellow. The Decision widget uses forecasts for these upcoming days (about 3 days ahead, the range of the seeing and Kp forecasts), not just the window up to 10:00.
 
 **Red (Bad)** if any of these apply during the astronomical night:
 
@@ -198,7 +198,7 @@ The look and feel will follow standard MUI design. Use Emotion for styling.
 
 The application adapts to the system's dark mode setting: dark theme when the system uses dark mode, light theme otherwise.
 
-Widgets are laid out in a grid of 3 per row. The weather report widget spans the full width. The layout is responsive and must work on mobile devices.
+Widgets are laid out in a grid of 3 per row. The Decision widget spans two thirds of the row. The weather report widget spans the full width. The layout is responsive and must work on mobile devices.
 
 The widgets are movable by drag and drop within the grid, using a drag handle in each widget's header. Dragging works with mouse, touch and keyboard. The widget order is saved in localStorage and restored on the next visit.
 
