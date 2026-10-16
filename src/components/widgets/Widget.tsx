@@ -8,16 +8,18 @@ import { DragHandleContext } from "../SortableItem";
 type WidgetProps = {
   title: string;
   children: ReactNode;
+  /** A fixed background color; text turns dark to stay readable in both modes. */
+  background?: string;
 };
 
-const Widget = ({ title, children }: WidgetProps) => {
+const Widget = ({ title, children, background }: WidgetProps) => {
   const handle = useContext(DragHandleContext);
 
   return (
-    <Card sx={{ height: "100%" }}>
+    <Card sx={{ height: "100%", ...(background && { bgcolor: background, color: "rgba(0, 0, 0, 0.87)" }) }}>
       <CardContent>
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Typography variant="overline" color="text.secondary" component="h2">
+          <Typography variant="overline" color={background ? "inherit" : "text.secondary"} component="h2">
             {title}
           </Typography>
           {handle}

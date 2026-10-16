@@ -40,11 +40,10 @@ type NoaaKpRow = { time_tag: string; kp: number };
 const getWeather = async (lat: number, lon: number, now: number): Promise<HourlyWeather[]> => {
   const { hourly } = await getJson<OpenMeteoResponse>(
     "https://api.open-meteo.com/v1/forecast" +
-      `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=36` +
+      `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=84` +
       "&hourly=temperature_2m,dew_point_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,precipitation,wind_speed_250hPa",
   );
   const currentHour = Math.floor(now / HOUR) * HOUR;
-  const end = getForecastEnd(new Date(now)).getTime();
   return hourly.time
     .map((time, i) => ({
       time: new Date(`${time}:00Z`).toISOString(),
@@ -56,12 +55,11 @@ const getWeather = async (lat: number, lon: number, now: number): Promise<Hourly
       precipitation: hourly.precipitation[i],
       jetStream: hourly.wind_speed_250hPa[i],
     }))
-    .filter((hour) => Date.parse(hour.time) >= currentHour && Date.parse(hour.time) <= end);
+    .filter((hour) => Date.parse(hour.time) >= currentHour);
 };
 
-/** Keeps 3-hour blocks that overlap the forecast window. */
-const inWindow = (time: number, now: number) =>
-  time > now - 3 * HOUR && time < getForecastEnd(new Date(now)).getTime();
+/** Keeps 3-hour blocks that haven't ended yet. */
+const notEnded = (time: number, now: number) => time > now - 3 * HOUR;
 
 const getSeeing = async (lat: number, lon: number, now: number): Promise<SeeingBlock[]> => {
   const { init, dataseries } = await getJson<SevenTimerResponse>(
@@ -75,7 +73,7 @@ const getSeeing = async (lat: number, lon: number, now: number): Promise<SeeingB
   );
   return dataseries
     .map((point) => ({ time: start + point.timepoint * HOUR, value: point.seeing }))
-    .filter((point) => inWindow(point.time, now))
+    .filter((point) => notEnded(point.time, now))
     .map((point) => ({ time: new Date(point.time).toISOString(), value: point.value }));
 };
 
@@ -85,7 +83,7 @@ const getKp = async (now: number): Promise<KpBlock[]> => {
   );
   return rows
     .map((row) => ({ time: Date.parse(`${row.time_tag}Z`), kp: row.kp }))
-    .filter((row) => inWindow(row.time, now))
+    .filter((row) => notEnded(row.time, now))
     .map((row) => ({ time: new Date(row.time).toISOString(), kp: row.kp }));
 };
 
@@ -120,13 +118,24 @@ export async function GET(request: Request) {
     getKp(now),
   ]);
 
+  // Widgets show data up to 10:00 tomorrow; the outlook keeps everything fetched (about 3 days) for the night summaries.
+  const end = getForecastEnd(new Date(now)).getTime();
+  const outlook = {
+    weather: valueOrNull(weather),
+    seeing: valueOrNull(seeing),
+    kp: valueOrNull(kp),
+  };
+  const inWindow = <T extends { time: string }>(rows: T[] | null) =>
+    rows && rows.filter((row) => Date.parse(row.time) < end);
+
   return Response.json({
     zip,
     place: place["place name"],
     latitude,
     longitude,
-    weather: valueOrNull(weather),
-    seeing: valueOrNull(seeing),
-    kp: valueOrNull(kp),
+    weather: outlook.weather && outlook.weather.filter((hour) => Date.parse(hour.time) <= end),
+    seeing: inWindow(outlook.seeing),
+    kp: inWindow(outlook.kp),
+    outlook,
   });
 }

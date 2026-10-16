@@ -27,4 +27,10 @@ export type Forecast = {
   weather: HourlyWeather[] | null;
   seeing: SeeingBlock[] | null;
   kp: KpBlock[] | null;
+  /** Everything fetched, about 3 days ahead, for the night summaries. */
+  outlook: {
+    weather: HourlyWeather[] | null;
+    seeing: SeeingBlock[] | null;
+    kp: KpBlock[] | null;
+  };
 };

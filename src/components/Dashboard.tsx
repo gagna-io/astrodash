@@ -20,6 +20,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import { getMoonAltitudes, getMoonState } from "@/lib/moon";
+import { summarizeNights } from "@/lib/summary";
 import { Forecast } from "@/lib/types";
 import { formatZip, normalizeZip } from "@/lib/zip";
 import SortableItem from "./SortableItem";
@@ -30,6 +31,7 @@ import MoonWidget from "./widgets/MoonWidget";
 import PrecipitationGraphWidget from "./widgets/PrecipitationGraphWidget";
 import PrecipitationWidget from "./widgets/PrecipitationWidget";
 import SeeingWidget from "./widgets/SeeingWidget";
+import SummaryWidget from "./widgets/SummaryWidget";
 import TemperatureWidget from "./widgets/TemperatureWidget";
 import WeatherWidget from "./widgets/WeatherWidget";
 import Widget from "./widgets/Widget";
@@ -37,7 +39,7 @@ import WindWidget from "./widgets/WindWidget";
 
 const ZIP_KEY = "astrodash.zip";
 
-const DEFAULT_ORDER = ["moon", "rain", "precipitation", "wind", "cloud", "seeing", "aurora", "jetstream", "temperature", "weather"];
+const DEFAULT_ORDER = ["summary", "moon", "rain", "precipitation", "wind", "cloud", "seeing", "aurora", "jetstream", "temperature", "weather"];
 const FULL_WIDTH = new Set(["weather"]);
 const ORDER_KEY = "astrodash.order";
 
@@ -146,6 +148,12 @@ const Dashboard = () => {
   };
   if (forecast) {
     const { weather, seeing, kp } = forecast;
+    nodes.summary =
+      weather && seeing && kp ? (
+        <SummaryWidget nights={summarizeNights(forecast, loadedAt)} />
+      ) : (
+        <Unavailable title="Tonight" />
+      );
     nodes.rain = weather ? <PrecipitationWidget weather={weather} /> : <Unavailable title="Rain / snow" />;
     nodes.precipitation = weather ? (
       <PrecipitationGraphWidget weather={weather} />

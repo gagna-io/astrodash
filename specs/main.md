@@ -6,6 +6,7 @@ This application is a lightweight application that will show a dashboard with re
 
 The following widgets will be available:
 
+- A summary widget: is tonight good for astrophotography?
 - A widget showing the current phase of the moon as an image and as percentage of the full moon. 100% means full moon.
 - A widget with the weather report for the forecast window (page load to 10:00).
 - A widget for the aurora borealis Kp index forecast
@@ -40,6 +41,40 @@ This is for astrophotographers trying to decide if it's worth starting a nights 
 - Forecasts beyond 10:00 the following morning.
 
 ## Features
+
+### Summary widget
+
+A simple answer to "Is this night good for astrophotography?", shown as a background color with the reasons listed. Only the upcoming astronomical night is checked (sun more than 18° below the horizon), calculated for the zip code location. Above the astronomical night's start and end times, the widget shows sunset and sunrise.
+
+Below it, separate smaller red / yellow / green boxes, each a third of the summary widget's width, show the same rating for each of the upcoming 3 nights (tonight and the next two), labeled with the weekday ("Mon", "Tue" etc.) and the reasons for red or yellow. The summary uses forecasts for these upcoming days (about 3 days ahead, the range of the seeing and Kp forecasts), not just the window up to 10:00.
+
+**Red (Bad)** if any of these apply during the astronomical night:
+
+- Rain is forecasted: any hour above 0 mm (Reason: Rain)
+- Cloud coverage is 100% every hour (Reason: Cloudy)
+- Aurora Kp index is 6 or above (Reason: Aurora)
+- Wind speed is above 15 m/s in any hour (Reason: Winds)
+
+**Yellow (Good)** if not red and any of these apply:
+
+- Cloud coverage is above 0% in any hour, including when it is 0% for at least 30% of the night (Reason: Partial cloudy)
+- Aurora Kp index is 5 or above but below 6 (Reason: Risk of aurora borealis)
+- Moon is at least 50% and above the horizon at any time (Reason: Moon)
+- Seeing is 6 or below on the Pickering scale at any time (Reason: Seeing)
+- Wind speed is 10–15 m/s in any hour (Reason: Winds)
+- Dew point reaches the temperature in any hour, so fog / mist will appear (Reason: Fog / mist)
+
+**Light green (Excellent)** when all of these apply:
+
+- No cloud coverage during the entire astronomical night
+- No rain is forecasted
+- Moon is below 50% and / or below the horizon
+- Seeing is above 6 on the Pickering scale
+- Wind speed is under 10 m/s
+
+Red beats yellow beats green, and every matching reason is listed (e.g. "Rain, Cloudy").
+
+If there is no astronomical night (in Sweden roughly mid-May to late July), the widget or box is grey and shows "No astronomical night".
 
 ### Moon phase widget
 
