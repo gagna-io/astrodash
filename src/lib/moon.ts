@@ -14,20 +14,24 @@ export const getMoonState = (date: Date): MoonState => ({
 export type MoonAltitude = {
   time: string; // ISO, UTC
   altitude: number; // degrees above the horizon, negative below
+  azimuth: number; // degrees clockwise from north
 };
 
 const STEP_MINUTES = 30;
 
-/** Moon altitude every 30 minutes from `start` to the end of the forecast window, seen from the given location. */
+/** Moon altitude and azimuth every 30 minutes from `start` to the end of the forecast window, seen from the given location. */
 export const getMoonAltitudes = (latitude: number, longitude: number, start: Date): MoonAltitude[] => {
   const observer = new Observer(latitude, longitude, 0);
   const minutes = (getForecastEnd(start).getTime() - start.getTime()) / 60000;
   return Array.from({ length: Math.floor(minutes / STEP_MINUTES) + 1 }, (_, i) => {
     const date = new Date(start.getTime() + i * STEP_MINUTES * 60 * 1000);
     const { ra, dec } = Equator(Body.Moon, date, observer, true, true);
+    const { altitude, azimuth } = Horizon(date, observer, ra, dec, "normal");
     return {
       time: date.toISOString(),
-      altitude: Horizon(date, observer, ra, dec, "normal").altitude,
+      altitude,
+      azimuth,
     };
   });
 };
+

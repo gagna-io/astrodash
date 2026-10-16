@@ -44,7 +44,7 @@ This is for astrophotographers trying to decide if it's worth starting a nights 
 
 This widget will show the current state of the moon as an image. A new image is created for this, drawn to match the current phase. Under the moon image, a percentage will be shown to further visualize the moons state. 0% is new moon and 100% is full moon. The phase shown is the phase right now.
 
-The widget also shows a graph of the moon's height over the horizon from page load to 10:00 the following morning, for the user's zip code location.
+The widget also shows a graph of the moon's height over the horizon from page load to 10:00 the following morning, for the user's zip code location. Under the horizon line, the graph marks where the moon passes due N, E, S or W, one label per direction at the time it happens.
 
 ### Weather report widget
 

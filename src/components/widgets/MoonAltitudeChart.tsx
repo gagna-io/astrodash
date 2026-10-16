@@ -7,6 +7,29 @@ import { CHART_COLOR } from "./chartColor";
 const WIDTH = 320;
 const HEIGHT = 150;
 const PAD = { left: 32, right: 8, top: 8, bottom: 20 };
+const COMPASS = ["N", "E", "S", "W"];
+
+/** Where the moon's azimuth passes due N, E, S or W: one label per crossing, at its interpolated point. */
+const cardinalCrossings = (altitudes: MoonAltitude[]) => {
+  const crossings: { index: number; label: string }[] = [];
+  let previous = altitudes.at(0)?.azimuth ?? 0;
+  altitudes.slice(1).forEach((point, i) => {
+    // Unwrap so a step across north (e.g. 350° → 10°) counts as +20°, not −340°.
+    let current = point.azimuth;
+    while (current - previous > 180) current -= 360;
+    while (previous - current > 180) current += 360;
+    const low = Math.min(previous, current);
+    const high = Math.max(previous, current);
+    for (let k = Math.ceil(low / 90) * 90; k <= high && high > low; k += 90) {
+      crossings.push({
+        index: i + (k - previous) / (current - previous),
+        label: COMPASS.at((((k / 90) % 4) + 4) % 4) ?? "N",
+      });
+    }
+    previous = current;
+  });
+  return crossings;
+};
 
 /** Line chart of the moon's altitude, with the horizon at 0°. */
 const MoonAltitudeChart = ({ altitudes }: { altitudes: MoonAltitude[] }) => {
@@ -55,11 +78,24 @@ const MoonAltitudeChart = ({ altitudes }: { altitudes: MoonAltitude[] }) => {
           </text>
         ) : null,
       )}
+      {cardinalCrossings(altitudes).map((crossing) => (
+        <text
+          key={`${crossing.label}-${crossing.index}`}
+          x={x(crossing.index)}
+          y={y(0) + 12}
+          fontSize={10}
+          fontWeight={600}
+          textAnchor="middle"
+          fill={text}
+        >
+          {crossing.label}
+        </text>
+      ))}
       <HoverZones
         zones={zonesFromPoints(
           altitudes.map((point, i) => ({
             x: x(i),
-            label: `${formatHour(point.time)} · ${point.altitude.toFixed(1)}°`,
+            label: `${formatHour(point.time)} · height ${point.altitude.toFixed(1)}° · azimuth ${Math.round(point.azimuth)}°`,
           })),
           PAD.left,
           WIDTH - PAD.right,
