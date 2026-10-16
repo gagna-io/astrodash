@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { formatHour } from "@/lib/time";
+import { formatAxisHour, formatHour } from "@/lib/time";
 import { HourlyWeather } from "@/lib/types";
 import Widget from "./Widget";
 import { CHART_COLOR } from "./chartColor";
@@ -25,7 +25,7 @@ const CloudWidget = ({ weather }: { weather: HourlyWeather[] }) => (
     <Box sx={{ display: "flex", gap: "2px" }}>
       {weather.map((hour, i) => (
         <Typography key={hour.time} variant="caption" color="text.secondary" sx={{ flex: 1, textAlign: "center" }}>
-          {i % 3 === 0 ? formatHour(hour.time).slice(0, 2) : ""}
+          {i % 3 === 0 ? formatAxisHour(hour.time) : ""}
         </Typography>
       ))}
     </Box>

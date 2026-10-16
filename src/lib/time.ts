@@ -38,5 +38,19 @@ const formatter = new Intl.DateTimeFormat("sv-SE", {
   minute: "2-digit",
 });
 
+const HOUR_MS = 3600 * 1000;
+
+/** Axis label: the Swedish hour only, e.g. "08". */
+export const formatAxisHour = (time: string | number) => formatHour(new Date(time).toISOString()).slice(0, 2);
+
+/** Full hours between `from` and `to`, every `step` hours, starting at the first full hour. */
+export const fullHourTicks = (from: number, to: number, step = 3) => {
+  const ticks: number[] = [];
+  for (let tick = Math.ceil(from / HOUR_MS) * HOUR_MS; tick <= to; tick += step * HOUR_MS) {
+    ticks.push(tick);
+  }
+  return ticks;
+};
+
 /** Formats an ISO time as local Swedish time, e.g. "22:00". */
 export const formatHour = (iso: string) => formatter.format(new Date(iso));

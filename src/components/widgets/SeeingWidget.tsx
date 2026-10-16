@@ -1,6 +1,6 @@
 import { alpha, useTheme } from "@mui/material/styles";
 import { seeingToArcsec, seeingToPickering } from "@/lib/seeing";
-import { formatHour } from "@/lib/time";
+import { formatAxisHour, formatHour } from "@/lib/time";
 import { SeeingBlock } from "@/lib/types";
 import HoverZones, { zonesFromPoints } from "./HoverZones";
 import Widget from "./Widget";
@@ -74,7 +74,7 @@ const SeeingWidget = ({ seeing }: { seeing: SeeingBlock[] }) => {
               textAnchor={i === 0 ? "start" : i === seeing.length - 1 ? "end" : "middle"}
               fill={text}
             >
-              {formatHour(block.time)}
+              {formatAxisHour(block.time)}
             </text>
           ) : null,
         )}

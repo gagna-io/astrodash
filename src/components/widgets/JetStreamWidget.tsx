@@ -1,5 +1,5 @@
 import { alpha, useTheme } from "@mui/material/styles";
-import { formatHour } from "@/lib/time";
+import { formatAxisHour, formatHour } from "@/lib/time";
 import { HourlyWeather } from "@/lib/types";
 import HoverZones, { zonesFromPoints } from "./HoverZones";
 import Widget from "./Widget";
@@ -49,7 +49,7 @@ const JetStreamWidget = ({ weather }: { weather: HourlyWeather[] }) => {
         {weather.map((hour, i) =>
           i % 3 === 0 ? (
             <text key={hour.time} x={x(i)} y={HEIGHT - 4} fontSize={10} textAnchor="middle" fill={text}>
-              {formatHour(hour.time)}
+              {formatAxisHour(hour.time)}
             </text>
           ) : null,
         )}

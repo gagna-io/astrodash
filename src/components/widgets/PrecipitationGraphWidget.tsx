@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material/styles";
-import { formatHour } from "@/lib/time";
+import { formatAxisHour, formatHour } from "@/lib/time";
 import { HourlyWeather } from "@/lib/types";
 import HoverZones, { zonesFromPoints } from "./HoverZones";
 import Widget from "./Widget";
@@ -51,7 +51,7 @@ const PrecipitationGraphWidget = ({ weather }: { weather: HourlyWeather[] }) => 
               textAnchor="middle"
               fill={text}
             >
-              {formatHour(hour.time)}
+              {formatAxisHour(hour.time)}
             </text>
           ) : null,
         )}

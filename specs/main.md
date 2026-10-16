@@ -15,6 +15,7 @@ The following widgets will be available:
 - A widget for the expected seeing conditions
 - Cloud coverage widget
 - Jet stream widget
+- Temperature and dew point widget
 
 The data for all of these widgets will be fetched from public API's relevant to each widget.
 
@@ -103,6 +104,12 @@ The graph's background is colored by wind speed:
 | Below 20 m/s | Green |
 | 20–35 m/s | Yellow |
 | Above 35 m/s | Red |
+
+### Temperature and dew point widget
+
+This widget will show a graph of the temperature and the dew point in °C for the forecast window (page load to 10:00). The x-axis is the time and the y-axis is the temperature. The temperature is a solid line and the dew point a dashed line.
+
+The graph's background is red from the bottom up to the dew point at each time, and light green (the same as in the seeing graph) above it.
 
 ### Aurora borealis widget
 

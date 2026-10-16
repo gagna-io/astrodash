@@ -1,6 +1,6 @@
 import { useTheme } from "@mui/material/styles";
 import { MoonAltitude } from "@/lib/moon";
-import { formatHour } from "@/lib/time";
+import { formatAxisHour, formatHour, fullHourTicks } from "@/lib/time";
 import HoverZones, { zonesFromPoints } from "./HoverZones";
 import { CHART_COLOR } from "./chartColor";
 
@@ -8,6 +8,7 @@ const WIDTH = 320;
 const HEIGHT = 150;
 const PAD = { left: 32, right: 8, top: 8, bottom: 20 };
 const COMPASS = ["N", "E", "S", "W"];
+const STEP = 30 * 60 * 1000; // ms between altitude points
 
 /** Where the moon's azimuth passes due N, E, S or W: one label per crossing, at its interpolated point. */
 const cardinalCrossings = (altitudes: MoonAltitude[]) => {
@@ -37,6 +38,8 @@ const MoonAltitudeChart = ({ altitudes }: { altitudes: MoonAltitude[] }) => {
   const values = altitudes.map((point) => point.altitude);
   const max = Math.ceil(Math.max(...values, 10) / 10) * 10;
   const min = Math.floor(Math.min(...values, -10) / 10) * 10;
+  const start = Date.parse(altitudes.at(0)?.time ?? "");
+  const end = Date.parse(altitudes.at(-1)?.time ?? "");
   const x = (i: number) => PAD.left + (i / (altitudes.length - 1)) * (WIDTH - PAD.left - PAD.right);
   const y = (altitude: number) => PAD.top + ((max - altitude) / (max - min)) * (HEIGHT - PAD.top - PAD.bottom);
   const line = altitudes.map((point, i) => `${i === 0 ? "M" : "L"}${x(i)} ${y(point.altitude)}`).join(" ");
@@ -71,13 +74,11 @@ const MoonAltitudeChart = ({ altitudes }: { altitudes: MoonAltitude[] }) => {
       ))}
       <path d={line} fill="none" stroke={theme.palette.divider} strokeWidth={2} />
       <path d={line} fill="none" stroke={CHART_COLOR} strokeWidth={2} clipPath="url(#above-horizon)" />
-      {altitudes.map((point, i) =>
-        i % 6 === 0 ? (
-          <text key={point.time} x={x(i)} y={HEIGHT - 4} fontSize={10} textAnchor="middle" fill={text}>
-            {formatHour(point.time)}
-          </text>
-        ) : null,
-      )}
+      {fullHourTicks(start, end).map((tick) => (
+        <text key={tick} x={x((tick - start) / STEP)} y={HEIGHT - 4} fontSize={10} textAnchor="middle" fill={text}>
+          {formatAxisHour(tick)}
+        </text>
+      ))}
       {cardinalCrossings(altitudes).map((crossing) => (
         <text
           key={`${crossing.label}-${crossing.index}`}

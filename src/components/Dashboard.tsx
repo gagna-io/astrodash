@@ -30,13 +30,14 @@ import MoonWidget from "./widgets/MoonWidget";
 import PrecipitationGraphWidget from "./widgets/PrecipitationGraphWidget";
 import PrecipitationWidget from "./widgets/PrecipitationWidget";
 import SeeingWidget from "./widgets/SeeingWidget";
+import TemperatureWidget from "./widgets/TemperatureWidget";
 import WeatherWidget from "./widgets/WeatherWidget";
 import Widget from "./widgets/Widget";
 import WindWidget from "./widgets/WindWidget";
 
 const ZIP_KEY = "astrodash.zip";
 
-const DEFAULT_ORDER = ["moon", "rain", "precipitation", "wind", "cloud", "seeing", "aurora", "jetstream", "weather"];
+const DEFAULT_ORDER = ["moon", "rain", "precipitation", "wind", "cloud", "seeing", "aurora", "jetstream", "temperature", "weather"];
 const FULL_WIDTH = new Set(["weather"]);
 const ORDER_KEY = "astrodash.order";
 
@@ -160,6 +161,11 @@ const Dashboard = () => {
       <Unavailable title="Aurora, Kp index" />
     );
     nodes.jetstream = weather ? <JetStreamWidget weather={weather} /> : <Unavailable title="Jet stream, m/s" />;
+    nodes.temperature = weather ? (
+      <TemperatureWidget weather={weather} />
+    ) : (
+      <Unavailable title="Temperature and dew point, °C" />
+    );
     nodes.weather = weather ? <WeatherWidget weather={weather} /> : <Unavailable title="Weather report until 10:00" />;
   }
   const visible = order.filter((id) => id in nodes);

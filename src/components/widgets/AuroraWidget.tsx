@@ -1,6 +1,6 @@
 import { alpha, useTheme } from "@mui/material/styles";
 import { getKpBands } from "@/lib/aurora";
-import { formatHour, getForecastEnd } from "@/lib/time";
+import { formatAxisHour, formatHour, fullHourTicks, getForecastEnd } from "@/lib/time";
 import { KpBlock } from "@/lib/types";
 import HoverZones from "./HoverZones";
 import Widget from "./Widget";
@@ -23,7 +23,7 @@ const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
   const theme = useTheme();
   const from = start.getTime();
   const to = getForecastEnd(start).getTime();
-  const ticks = Array.from({ length: Math.floor((to - from) / (3 * HOUR)) + 1 }, (_, i) => from + i * 3 * HOUR);
+  const ticks = fullHourTicks(from, to);
   const x = (time: number) => PAD.left + ((time - from) / (to - from)) * (WIDTH - PAD.left - PAD.right);
   const y = (value: number) => PAD.top + ((KP_MAX - value) / KP_MAX) * (HEIGHT - PAD.top - PAD.bottom);
   const clamp = (time: number) => Math.min(Math.max(time, from), to);
@@ -66,16 +66,16 @@ const AuroraWidget = ({ kp, start, latitude }: AuroraWidgetProps) => {
             {tick}
           </text>
         ))}
-        {ticks.map((tick, i) => (
+        {ticks.map((tick) => (
           <text
             key={tick}
             x={x(tick)}
             y={HEIGHT - 4}
             fontSize={10}
-            textAnchor={i === 0 ? "start" : x(tick) > WIDTH - 24 ? "end" : "middle"}
+            textAnchor={x(tick) > WIDTH - 12 ? "end" : "middle"}
             fill={text}
           >
-            {formatHour(new Date(tick).toISOString())}
+            {formatAxisHour(tick)}
           </text>
         ))}
         <path d={line} fill="none" stroke={CHART_COLOR} strokeWidth={2} />
