@@ -67,6 +67,9 @@ const saveOrder = (order: string[]) => {
   }
 };
 
+/** The `?zip=` deeplink, as typed in the URL (may be invalid). */
+const readLinkZip = () => new URLSearchParams(window.location.search).get("zip");
+
 const readZip = () => {
   try {
     return normalizeZip(localStorage.getItem(ZIP_KEY) ?? "");
@@ -94,9 +97,20 @@ const Unavailable = ({ title }: { title: string }) => (
 const Dashboard = () => {
   const [loadedAt] = useState(() => new Date());
   const [moon] = useState(() => getMoonState(loadedAt));
-  const [zip, setZip] = useState(readZip);
-  const [input, setInput] = useState(() => (zip ? formatZip(zip) : ""));
-  const [inputError, setInputError] = useState(false);
+  // A deeplink (/dashboard?zip=12345) is searched as if typed; otherwise the saved zip code is used.
+  const [linkZip] = useState(readLinkZip);
+  const [zip, setZip] = useState(() => {
+    if (linkZip === null) {
+      return readZip();
+    }
+    const fromLink = normalizeZip(linkZip);
+    if (fromLink) {
+      saveZip(fromLink);
+    }
+    return fromLink;
+  });
+  const [input, setInput] = useState(() => (zip ? formatZip(zip) : (linkZip ?? "")));
+  const [inputError, setInputError] = useState(() => linkZip !== null && zip === null);
   const [result, setResult] = useState<Result | null>(null);
   const [order, setOrder] = useState(readOrder);
   const sensors = useSensors(
@@ -126,6 +140,17 @@ const Dashboard = () => {
       cancelled = true;
     };
   }, [zip]);
+
+  /** Keeps only digits, shows them as "XXX XX" and searches as soon as all five are entered. */
+  const handleInput = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 5);
+    setInput(digits.length > 3 ? formatZip(digits.padEnd(5, " ")).trimEnd() : digits);
+    if (digits.length === 5) {
+      setInputError(false);
+      saveZip(digits);
+      setZip(digits);
+    }
+  };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -203,7 +228,7 @@ const Dashboard = () => {
           placeholder="XXX XX"
           size="small"
           value={input}
-          onChange={(event) => setInput(event.target.value)}
+          onChange={(event) => handleInput(event.target.value)}
           error={inputError}
           helperText={inputError ? 'Use "XXX XX" or "XXXXX"' : forecast?.place}
           slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 6 } }}

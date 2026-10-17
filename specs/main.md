@@ -168,7 +168,9 @@ Example: zip code 11245 (Stockholm, 59.3°N) has threshold Kp 4: green 0–2, ye
 
 ### Zip code input
 
-An input field where the user enters their current Swedish zip code. Only five digits are accepted, in the format "XXX XX" or "XXXXX"; anything else is rejected. The zip code is converted to latitude/longitude coordinates, which all APIs consume. The zip code is saved in localStorage and restored on the next visit.
+An input field where the user enters their current Swedish zip code. Only five digits are accepted, in the format "XXX XX" or "XXXXX"; anything else is rejected. While typing, only digits are kept and the field auto-formats as "XXX XX" (a space after the third digit). As soon as all five digits are entered, the search starts automatically. The zip code is converted to latitude/longitude coordinates, which all APIs consume. The zip code is saved in localStorage and restored on the next visit.
+
+Deeplinks: opening `/dashboard?zip=12345` (or `?zip=123 45`) enters that zip code in the search field and searches automatically, taking priority over the saved zip code. A valid deeplink zip code is saved like a manual search. An invalid one is shown in the field with the validation error, and nothing is searched.
 
 ## Data sources (proposed)
 
