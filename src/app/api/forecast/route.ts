@@ -40,7 +40,7 @@ type NoaaKpRow = { time_tag: string; kp: number };
 const getWeather = async (lat: number, lon: number, now: number): Promise<HourlyWeather[]> => {
   const { hourly } = await getJson<OpenMeteoResponse>(
     "https://api.open-meteo.com/v1/forecast" +
-      `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=84` +
+      `?latitude=${lat}&longitude=${lon}&timezone=GMT&wind_speed_unit=ms&forecast_hours=120` +
       "&hourly=temperature_2m,dew_point_2m,relative_humidity_2m,cloud_cover,wind_speed_10m,precipitation,wind_speed_250hPa",
   );
   const currentHour = Math.floor(now / HOUR) * HOUR;
@@ -118,7 +118,7 @@ export async function GET(request: Request) {
     getKp(now),
   ]);
 
-  // Widgets show data up to 10:00 tomorrow; the outlook keeps everything fetched (about 3 days) for the night summaries.
+  // Widgets show data up to 10:00 tomorrow; the outlook keeps everything fetched (weather about 5 days) for the night summaries.
   const end = getForecastEnd(new Date(now)).getTime();
   const outlook = {
     weather: valueOrNull(weather),

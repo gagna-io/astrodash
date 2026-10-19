@@ -16,7 +16,7 @@ const LEVELS: Record<NightLevel, { label: string; background: string }> = {
 
 const time = (date?: Date) => (date ? formatHour(date.toISOString()) : "–");
 
-/** Tonight's verdict in a full-width box, with one separate box per upcoming night below it (a third of the width each). */
+/** Tonight's verdict in a full-width box, with one separate box for each of the next three nights below it. */
 const SummaryWidget = ({ nights }: { nights: NightSummary[] }) => {
   const tonight = nights.at(0);
   if (!tonight) {
@@ -43,7 +43,7 @@ const SummaryWidget = ({ nights }: { nights: NightSummary[] }) => {
         </Widget>
       </Box>
       <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2 }}>
-        {nights.map((night) => (
+        {nights.slice(1).map((night) => (
           <Card
             key={night.weekday + time(night.night?.start ?? night.sunset)}
             sx={{ bgcolor: LEVELS[night.level].background, color: "rgba(0, 0, 0, 0.87)" }}

@@ -46,7 +46,7 @@ This is for astrophotographers trying to decide if it's worth starting a nights 
 
 A simple answer to "Is this night good for astrophotography?", shown as a background color with the reasons listed. Only the upcoming astronomical night is checked (sun more than 18° below the horizon), calculated for the zip code location. Above the astronomical night's start and end times, the widget shows sunset and sunrise.
 
-Below it, separate smaller red / yellow / green boxes, each a third of the Decision widget's width, show the same rating for each of the upcoming 3 nights (tonight and the next two), labeled with the weekday ("Mon", "Tue" etc.) and the reasons for red or yellow. The Decision widget uses forecasts for these upcoming days (about 3 days ahead, the range of the seeing and Kp forecasts), not just the window up to 10:00.
+Below it, separate smaller red / yellow / green boxes, each a third of the Decision widget's width, show the same rating for each of the three nights after tonight, labeled with the weekday ("Mon", "Tue" etc.) and the reasons for red or yellow. The Decision widget uses forecasts for these upcoming days (weather about 5 days ahead; the seeing and Kp forecasts only reach about 3 days, so the last night is rated without them where they run out), not just the window up to 10:00.
 
 **Red (Bad)** if any of these apply during the astronomical night:
 

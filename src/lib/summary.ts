@@ -80,7 +80,7 @@ const rateNight = (forecast: Forecast, observer: Observer, night: Night): Pick<N
 };
 
 /** Summaries for the upcoming `count` nights, starting with the current or next one. */
-export const summarizeNights = (forecast: Forecast, from: Date, count = 3): NightSummary[] => {
+export const summarizeNights = (forecast: Forecast, from: Date, count = 4): NightSummary[] => {
   const observer = new Observer(forecast.latitude, forecast.longitude, 0);
   const summaries: NightSummary[] = [];
   let searchFrom = from;
