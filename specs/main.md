@@ -51,16 +51,16 @@ Below it, separate smaller red / yellow / green boxes, each a third of the Decis
 **Red (Bad)** if any of these apply during the astronomical night:
 
 - Rain is forecasted: any hour above 0 mm (Reason: Rain)
-- Cloud coverage is 100% every hour (Reason: Cloudy)
+- Cloud coverage is above 0% every hour (Reason: Cloudy)
 - Aurora Kp index is 6 or above (Reason: Aurora)
 - Wind speed is above 15 m/s in any hour (Reason: Winds)
 
 **Yellow (Good)** if not red and any of these apply:
 
-- Cloud coverage is above 0% in any hour, including when it is 0% for at least 30% of the night (Reason: Partial cloudy)
+- Some hours have 0% cloud coverage and others are cloudy (Reason: Partial cloudy)
 - Aurora Kp index is 5 or above but below 6 (Reason: Risk of aurora borealis)
 - Moon is at least 50% and above the horizon at any time (Reason: Moon)
-- Seeing is 6 or below on the Pickering scale at any time (Reason: Seeing)
+- Seeing is 6 or below on the Pickering scale while the jet stream is 20 m/s or more during the same 3-hour period, at any time (Reason: Seeing)
 - Wind speed is 10–15 m/s in any hour (Reason: Winds)
 - Dew point reaches the temperature in any hour, so fog / mist will appear (Reason: Fog / mist)
 
@@ -69,7 +69,7 @@ Below it, separate smaller red / yellow / green boxes, each a third of the Decis
 - No cloud coverage during the entire astronomical night
 - No rain is forecasted
 - Moon is below 50% and / or below the horizon
-- Seeing is above 6 on the Pickering scale
+- Seeing is above 6 on the Pickering scale, or the jet stream is below 20 m/s when it isn't
 - Wind speed is under 10 m/s
 
 Red beats yellow beats green, and every matching reason is listed (e.g. "Rain, Cloudy").

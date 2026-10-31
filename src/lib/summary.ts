@@ -57,7 +57,7 @@ const rateNight = (forecast: Forecast, observer: Observer, night: Night): Pick<N
 
   const bad: string[] = [];
   if (hours.some((hour) => hour.precipitation > 0)) bad.push("Rain");
-  if (hours.length > 0 && hours.every((hour) => hour.cloudCover === 100)) bad.push("Cloudy");
+  if (hours.length > 0 && hours.every((hour) => hour.cloudCover > 0)) bad.push("Cloudy");
   if (maxKp >= 6) bad.push("Aurora");
   if (maxWind > 15) bad.push("Winds");
   if (bad.length > 0) {
@@ -65,10 +65,17 @@ const rateNight = (forecast: Forecast, observer: Observer, night: Night): Pick<N
   }
 
   const good: string[] = [];
+  // Not red, so some hours are clear (0%); any cloudy hour on top makes it partial.
   if (hours.some((hour) => hour.cloudCover > 0)) good.push("Partial cloudy");
   if (maxKp >= 5) good.push("Risk of aurora borealis");
   if (moonPercentage >= 50 && moonUp) good.push("Moon");
-  if (seeing.some((block) => seeingToPickering(block.value) <= 6)) good.push("Seeing");
+  // Poor seeing only counts when a strong jet stream (20 m/s or more) blows during the same 3-hour block.
+  const strongJetDuring = (time: string) =>
+    hours.some((hour) => {
+      const offset = Date.parse(hour.time) - Date.parse(time);
+      return offset >= 0 && offset < 3 * HOUR && hour.jetStream >= 20;
+    });
+  if (seeing.some((block) => seeingToPickering(block.value) <= 6 && strongJetDuring(block.time))) good.push("Seeing");
   if (maxWind >= 10) good.push("Winds");
   // Forecast dew point never exceeds temperature, so reaching it (100% humidity) is the fog signal.
   if (hours.some((hour) => hour.dewPoint >= hour.temperature)) good.push("Fog / mist");
